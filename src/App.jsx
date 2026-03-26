@@ -7,6 +7,8 @@ import TopicHistory from './components/TopicHistory.jsx';
 import CategoryDrawer from './components/CategoryDrawer.jsx';
 import { MetroAvatar } from './components/UIKit.jsx';
 
+import logo from './assets/logo.png';
+
 export default function App() {
   const {
     botReady,
@@ -78,7 +80,7 @@ export default function App() {
             onClick={() => setIsWidgetOpen(true)}
             className="w-14 h-14 bg-white rounded-xl shadow-2xl flex items-center justify-center hover:scale-105 active:scale-95 transition-all overflow-hidden border border-gray-100"
           >
-            <img src="/Metro.png" alt="Metro" className="w-[85%] h-[85%] object-contain rounded-lg" />
+            <img src={logo} alt="Metro" className="w-[85%] h-[85%] object-contain rounded-lg" />
           </button>
         </div>
       )}

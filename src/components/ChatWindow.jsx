@@ -91,12 +91,7 @@ export default function ChatWindow({ messages, messagesLoading, isStreaming, str
               {cat}
             </button>
           ))}
-          <button
-            onClick={onViewMore}
-            className="flex-shrink-0 text-[12.5px] font-semibold underline underline-offset-4 text-[#004A99] hover:text-[#003566] px-2 ml-1"
-          >
-            View More
-          </button>
+
         </div>
       </div>
     </div>

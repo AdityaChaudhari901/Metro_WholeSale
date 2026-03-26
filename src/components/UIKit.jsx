@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import logo from '../assets/logo.png';
 
 // Metro Wholesale avatar icon
 export function MetroAvatar({ size = 8 }) {
@@ -10,7 +11,7 @@ export function MetroAvatar({ size = 8 }) {
       style={{ minWidth: pixelSize, maxWidth: pixelSize, minHeight: pixelSize, maxHeight: pixelSize }}
     >
       <img 
-        src="/Metro.png" 
+        src={logo} 
         alt="Metro" 
         className="w-full h-full object-contain rounded-md"
       />
