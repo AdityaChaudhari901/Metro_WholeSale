@@ -57,6 +57,12 @@ export default function MessageBubble({ message, isStreaming, onQuestionClick, o
   const { introText, questions, detectedCategory } = parseContent(message.content);
   const isDisabled = isStreaming;
 
+  // Hide SDK-generated stop confirmation messages
+  if (!isUser && message.content && (
+    message.content.toLowerCase().includes('stopped the query') ||
+    message.content.toLowerCase().includes('you have stopped')
+  )) return null;
+
   return (
     <div className={`flex items-start gap-2 ${isUser ? 'flex-row-reverse mb-5' : 'flex-row mb-5 animate-in fade-in slide-in-from-bottom-2 duration-500'}`}>
       {!isUser && (

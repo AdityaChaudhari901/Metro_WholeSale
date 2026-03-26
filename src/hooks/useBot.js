@@ -31,8 +31,9 @@ export function useBot() {
   const [threads, setThreads] = useState([]);
   const [threadsLoading, setThreadsLoading] = useState(false);
   const [activeThreadId, setActiveThreadId] = useState(null);
-  const [messages, setMessages] = useState([]); 
-  
+  const [messages, setMessages] = useState([]);
+  const [messagesLoading, setMessagesLoading] = useState(false);
+
   const [isStreaming, setIsStreaming] = useState(false);
   const [streamingMsgId, setStreamingMsgId] = useState(null);
 
@@ -97,9 +98,12 @@ export function useBot() {
     if (!botRef.current) return;
     setActiveThreadId(threadId);
     setMessages([]);
+    setMessagesLoading(true);
     try {
       const res = await botRef.current.getMessages({ threadId });
-      const list = extractArray(res);
+      // The API returns messages newest-first. Reverse to get chronological order.
+      const rawList = extractArray(res);
+      const list = [...rawList].reverse();
       
       const unifiedMessages = list.map((m, i) => ({
          id: m.id || m.message_id || m._id || `historical-${i}`,
@@ -108,10 +112,13 @@ export function useBot() {
          timestamp: m.timestamp || m.created_at || m.time || new Date().toISOString(),
       }));
 
+      // Secondary sort by timestamp in case some messages have different timestamps
       unifiedMessages.sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
       setMessages(unifiedMessages);
     } catch (err) {
       console.error('getMessages Error:', err);
+    } finally {
+      setMessagesLoading(false);
     }
   }, []);
 
@@ -170,10 +177,12 @@ export function useBot() {
         if (newThreadId && !activeThreadIdRef.current) {
           activeThreadIdRef.current = newThreadId;
           setActiveThreadId(newThreadId);
-          // Optimitically add the conversation to the drawer immediately with the message text as provisional title
+          // Use the FIRST user message as the thread title
           setThreads(prev => {
             if (prev.find(t => t.id === newThreadId || t.thread_id === newThreadId)) return prev;
-            return [{ id: newThreadId, thread_id: newThreadId, title: cleanText }, ...prev];
+            const firstUserMsg = messagesRef.current.find(m => m.role === 'user');
+            const title = firstUserMsg?.content || cleanText;
+            return [{ id: newThreadId, thread_id: newThreadId, title }, ...prev];
           });
           // Background sync after DB consistency lag
           setTimeout(fetchThreads, 2000);
@@ -279,7 +288,7 @@ export function useBot() {
     threadsLoading,
     activeThreadId,
     messages,
-    messagesLoading: false,
+    messagesLoading,
     isStreaming,
     streamingMsgId,
     sendMessage,
