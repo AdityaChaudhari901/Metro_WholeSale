@@ -30,6 +30,7 @@ export default function App() {
   const [historyOpen, setHistoryOpen] = useState(false);
   const [isWidgetOpen, setIsWidgetOpen] = useState(false);
   const [categoryDrawerOpen, setCategoryDrawerOpen] = useState(false);
+  const [drawerQuestions, setDrawerQuestions] = useState(null);
   const hasMessages = messages.length > 0;
 
   function handleQuickSend(text) {
@@ -75,10 +76,9 @@ export default function App() {
         <div className="fixed bottom-[10px] right-[16px] z-50 flex flex-col items-end gap-3 animate-in fade-in slide-in-from-bottom-4 duration-500">
           <button
             onClick={() => setIsWidgetOpen(true)}
-            className="w-14 h-14 bg-[#004A99] rounded-xl shadow-2xl flex flex-col items-center justify-center hover:scale-105 active:scale-95 transition-all overflow-hidden"
+            className="w-14 h-14 bg-white rounded-xl shadow-2xl flex items-center justify-center hover:scale-105 active:scale-95 transition-all overflow-hidden border border-gray-100"
           >
-            <span className="text-[#FFE000] font-black text-[15px] leading-none tracking-tighter" style={{ fontFamily: 'Arial, sans-serif' }}>METRO</span>
-            <span className="text-white font-bold text-[7px] leading-tight tracking-wide" style={{ fontFamily: 'Arial, sans-serif' }}>Wholesale</span>
+            <img src="/Metro.png" alt="Metro" className="w-[85%] h-[85%] object-contain rounded-lg" />
           </button>
         </div>
       )}
@@ -146,7 +146,10 @@ export default function App() {
                 isStreaming={isStreaming}
                 streamingMsgId={streamingMsgId}
                 onQuestionClick={sendMessage}
-                onViewMore={(cat) => setCategoryDrawerOpen(cat || true)}
+                onViewMore={(cat, qs) => {
+                  setCategoryDrawerOpen(cat || true);
+                  setDrawerQuestions(qs || null);
+                }}
               />
             )}
 
@@ -154,7 +157,11 @@ export default function App() {
             <CategoryDrawer
               isOpen={!!categoryDrawerOpen}
               initialCategory={typeof categoryDrawerOpen === 'string' ? categoryDrawerOpen : null}
-              onClose={() => setCategoryDrawerOpen(false)}
+              drawerQuestions={drawerQuestions}
+              onClose={() => {
+                setCategoryDrawerOpen(false);
+                setDrawerQuestions(null);
+              }}
               onSelect={sendMessage}
             />
           </div>

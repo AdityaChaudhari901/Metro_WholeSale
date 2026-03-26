@@ -2,19 +2,18 @@ import React, { useState } from 'react';
 
 // Metro Wholesale avatar icon
 export function MetroAvatar({ size = 8 }) {
-  const isLarge = size >= 10;
-  const radius = 'rounded-md';
-  const metroSize = isLarge ? 'text-[11px]' : 'text-[9px]';
-  const wholeSize = isLarge ? 'text-[5px]' : 'text-[4px]';
   const pixelSize = size * 4;
-
+  
   return (
     <div
-      className={`w-${size} h-${size} ${radius} bg-[#004A99] flex flex-col items-center justify-center flex-shrink-0 shadow-sm border border-blue-800 overflow-hidden`}
-      style={{ minWidth: pixelSize, maxWidth: pixelSize }}
+      className={`w-${size} h-${size} rounded-lg bg-white flex items-center justify-center flex-shrink-0 shadow-sm border border-gray-100 overflow-hidden`}
+      style={{ minWidth: pixelSize, maxWidth: pixelSize, minHeight: pixelSize, maxHeight: pixelSize }}
     >
-      <span className={`text-[#FFE000] font-black ${metroSize} leading-none tracking-tighter`} style={{ fontFamily: 'Arial, sans-serif' }}>METRO</span>
-      <span className={`text-white font-bold ${wholeSize} leading-tight`} style={{ fontFamily: 'Arial, sans-serif' }}>Wholesale</span>
+      <img 
+        src="/Metro.png" 
+        alt="Metro" 
+        className="w-full h-full object-contain rounded-md"
+      />
     </div>
   );
 }

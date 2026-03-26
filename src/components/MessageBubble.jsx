@@ -103,7 +103,7 @@ export default function MessageBubble({ message, isStreaming, onQuestionClick, o
 
         {!isUser && questions.length > 0 && (
           <div className="w-full bg-white border border-gray-100 rounded-[16px] p-4 shadow-sm flex flex-col items-start gap-2.5 mt-1 animate-in fade-in zoom-in-95 duration-300">
-            {questions.slice(0, 6).map((q, idx) => (
+            {questions.slice(0, 5).map((q, idx) => (
               <button
                 key={idx}
                 disabled={isDisabled}
@@ -115,10 +115,10 @@ export default function MessageBubble({ message, isStreaming, onQuestionClick, o
                 {q}
               </button>
             ))}
-            {questions.length > 6 && (
+            {(questions.length > 10 || (detectedCategory && detectedCategory !== 'General Queries')) && (
               <button
                 disabled={isDisabled}
-                onClick={() => onViewMore && onViewMore(detectedCategory)}
+                onClick={() => onViewMore && onViewMore(detectedCategory, questions)}
                 className={`text-left text-[13px] font-semibold underline underline-offset-4 mt-1 ${
                   isDisabled ? 'text-gray-400 cursor-not-allowed' : 'text-[#004A99] hover:text-[#003566]'
                 }`}

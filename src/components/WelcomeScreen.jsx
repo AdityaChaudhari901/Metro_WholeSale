@@ -57,9 +57,6 @@ export default function WelcomeScreen({ onQuestionClick, onCategoryClick }) {
               className="flex-shrink-0 text-[12.5px] border border-gray-200 rounded-full px-3.5 py-1.5 hover:border-blue-300 hover:bg-blue-50/50 hover:text-[#004A99] transition-all duration-150 font-medium text-gray-700 active:scale-95"
             >
               {cat}
-              {i === CATEGORIES.length - 1 && (
-                <span className="ml-1 text-gray-400">›</span>
-              )}
             </button>
           ))}
         </div>

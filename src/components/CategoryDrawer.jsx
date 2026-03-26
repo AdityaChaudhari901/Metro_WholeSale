@@ -63,7 +63,7 @@ const CATEGORY_QUESTIONS = {
   ]
 };
 
-export default function CategoryDrawer({ isOpen, initialCategory, onClose, onSelect }) {
+export default function CategoryDrawer({ isOpen, initialCategory, drawerQuestions, onClose, onSelect }) {
   const [selectedCategory, setSelectedCategory] = useState(null);
 
   // Set initial category if provided when opening
@@ -77,7 +77,11 @@ export default function CategoryDrawer({ isOpen, initialCategory, onClose, onSel
 
   if (!isOpen) return null;
 
-  const currentQuestions = (selectedCategory && CATEGORY_QUESTIONS[selectedCategory]) || [];
+  // Prioritize live questions from the bot if we have them and we're in that category
+  const isMatchingInitialCat = !initialCategory || selectedCategory === initialCategory;
+  const currentQuestions = (isMatchingInitialCat && drawerQuestions && drawerQuestions.length > 0)
+    ? drawerQuestions
+    : (selectedCategory && CATEGORY_QUESTIONS[selectedCategory]) || [];
 
   const handleBack = () => {
     setSelectedCategory(null);
