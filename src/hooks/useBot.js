@@ -104,12 +104,12 @@ export function useBot() {
       // The API returns messages newest-first. Reverse to get chronological order.
       const rawList = extractArray(res);
       const list = [...rawList].reverse();
-      
+
       const unifiedMessages = list.map((m, i) => ({
-         id: m.id || m.message_id || m._id || `historical-${i}`,
-         role: m.role || (m.is_bot ? 'assistant' : 'user'),
-         content: m.content || m.text || m.message || '',
-         timestamp: m.timestamp || m.created_at || m.time || new Date().toISOString(),
+        id: m.id || m.message_id || m._id || `historical-${i}`,
+        role: m.role || (m.is_bot ? 'assistant' : 'user'),
+        content: m.content || m.text || m.message || '',
+        timestamp: m.timestamp || m.created_at || m.time || new Date().toISOString(),
       }));
 
       // Secondary sort by timestamp in case some messages have different timestamps
@@ -134,29 +134,29 @@ export function useBot() {
 
     // 1. Force Stop any previous danglers
     if (activeThreadIdRef.current) {
-        try { botRef.current.stopMessage({ thread_id: activeThreadIdRef.current }); } catch (e) {}
+      try { botRef.current.stopMessage({ thread_id: activeThreadIdRef.current }); } catch (e) { }
     }
 
     // 2. Increment TURN
     turnCounter++;
     const currentTurn = turnCounter;
     const nowStamp = new Date().toISOString();
-    
+
     // IDs must be absolutely unique for this session instance
     const userMsgId = `user-${currentTurn}-${Date.now()}`;
     const botMsgId = `bot-${currentTurn}-${Date.now()}`;
-    
+
     const userMsg = {
       id: userMsgId,
       role: 'user',
       content: cleanText,
       timestamp: nowStamp,
     };
-    
-    const botPlaceholder = { 
-      id: botMsgId, 
-      role: 'assistant', 
-      content: '', 
+
+    const botPlaceholder = {
+      id: botMsgId,
+      role: 'assistant',
+      content: '',
       timestamp: new Date(new Date(nowStamp).getTime() + 100).toISOString()
     };
 
@@ -170,6 +170,24 @@ export function useBot() {
       path: window.location.pathname,
       ...(activeThreadIdRef.current ? { thread_id: activeThreadIdRef.current } : {}),
     };
+
+    // Timeout safety: if neither replyListener nor deltaListener ever fires,
+    // clear streaming state after 45s to prevent infinite loading.
+    let safetyTimeoutId = null;
+    const clearSafety = () => { if (safetyTimeoutId) { clearTimeout(safetyTimeoutId); safetyTimeoutId = null; } };
+    safetyTimeoutId = setTimeout(() => {
+      if (streamingMsgIdRef.current === botMsgId) {
+        setIsStreaming(false);
+        setStreamingMsgId(null);
+        setMessages((prev) =>
+          prev.map(m =>
+            m.id === botMsgId && !m.content
+              ? { ...m, content: 'The response took too long. Please try again.', isError: true }
+              : m
+          )
+        );
+      }
+    }, 45000);
 
     try {
       const handleNewThread = (res) => {
@@ -194,14 +212,15 @@ export function useBot() {
           handleNewThread(res);
           const chunk = res?.data?.content ?? '';
           if (!chunk) return;
-          setMessages((prev) => 
+          setMessages((prev) =>
             prev.map(m => m.id === botMsgId ? { ...m, content: m.content + chunk } : m)
           );
         },
         replyListener: (res) => {
           handleNewThread(res);
+          clearSafety();
           const replyContent = res?.data?.content ?? (typeof res?.data === 'string' ? res.data : '');
-          setMessages((prev) => 
+          setMessages((prev) =>
             prev.map(m => m.id === botMsgId ? { ...m, content: replyContent || m.content } : m)
           );
 
@@ -213,7 +232,7 @@ export function useBot() {
         progressListener: (res) => {
           const progressText = res?.data?.progress ?? res?.data?.content ?? '';
           if (progressText) {
-            setMessages((prev) => 
+            setMessages((prev) =>
               prev.map(m => m.id === botMsgId ? { ...m, progress: progressText } : m)
             );
           }
@@ -221,15 +240,16 @@ export function useBot() {
         toolMessageListener: (res) => {
           const toolContent = res?.data?.content ?? '';
           if (toolContent) {
-            setMessages((prev) => 
+            setMessages((prev) =>
               prev.map(m => m.id === botMsgId ? { ...m, toolOutput: toolContent } : m)
             );
           }
         },
       });
     } catch (err) {
+      clearSafety();
       console.error('[Kaily] Message Error:', err);
-      setMessages((prev) => 
+      setMessages((prev) =>
         prev.map(m => m.id === botMsgId ? { ...m, content: 'Sorry, I encountered an error.', isError: true } : m)
       );
       if (streamingMsgIdRef.current === botMsgId) {

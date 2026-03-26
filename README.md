@@ -1,16 +1,38 @@
-# React + Vite
+# Metro Wholesale Chatbot
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A production-ready chatbot widget for Metro Wholesale, powered by the [Kaily AI Chat SDK](https://www.kaily.ai/).
 
-Currently, two official plugins are available:
+## Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **React 19** + **Vite 8** — fast, modern frontend
+- **Tailwind CSS 3** — utility-first styling
+- **@kaily-ai/chat-sdk** — AI copilot messaging, thread management, and streaming
 
-## React Compiler
+## Getting Started
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+```bash
+npm install
+npm run dev       # → http://localhost:5173
+npm run build     # production bundle → dist/
+```
 
-## Expanding the ESLint configuration
+## Project Structure
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```
+src/
+├── App.jsx                 # Root widget layout, routing, state
+├── main.jsx                # Entry point
+├── index.css               # Global styles + animations
+├── assets/
+│   └── logo.png            # Metro Wholesale brand icon
+├── components/
+│   ├── CategoryDrawer.jsx  # Slide-up query topic navigator
+│   ├── ChatInput.jsx       # Message input with streaming controls
+│   ├── ChatWindow.jsx      # Message list + category bar
+│   ├── MessageBubble.jsx   # Individual message rendering + question parsing
+│   ├── TopicHistory.jsx    # Conversation history drawer
+│   ├── UIKit.jsx           # Shared UI primitives (avatar, wave bars, typing dots)
+│   └── WelcomeScreen.jsx   # Initial greeting + popular questions
+└── hooks/
+    └── useBot.js           # Kaily SDK integration (init, messaging, threads)
+```

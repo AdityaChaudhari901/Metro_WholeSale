@@ -80,20 +80,24 @@ export default function MessageBubble({ message, isStreaming, onQuestionClick, o
         </div>
       )}
 
-      <div className={`flex flex-col gap-1.5 max-w-[85%] ${isUser ? 'items-end' : 'items-start'}`}>
+      <div className={`flex flex-col gap-1.5 max-w-[82%] ${isUser ? 'items-end' : 'items-start'}`}>
         {isUser && (
           <span className="text-[7.5px] text-gray-400 mr-2 font-medium bg-gray-50/50 px-1 py-0.5 rounded-full border border-gray-100 mb-0.5">{formatTime(message.timestamp)}</span>
         )}
 
         <div
-          className={`px-4 py-3 text-[13.5px] leading-snug relative shadow-sm border transition-all ${
+          className={`px-3.5 py-2.5 text-[13px] leading-snug relative shadow-sm border transition-all ${
+            isEmpty ? 'w-fit' : ''
+          } ${
             isUser
               ? 'bg-white text-gray-800 border-gray-100 rounded-[14px] rounded-tr-none'
               : 'bg-[#ECF2FF] text-[#111111] border-[#D0E0FF] rounded-[14px] rounded-tl-none'
           }`}
         >
           {isEmpty ? (
-            <div className="py-1 px-1.5"><TypingDots /></div>
+            <div className="flex items-center py-0.5">
+              <TypingDots />
+            </div>
           ) : (
             <div className={message.isError ? 'text-red-500 font-medium' : ''}>
               {hasVisibleProgress && (

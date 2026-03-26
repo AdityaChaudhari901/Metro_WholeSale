@@ -14,8 +14,6 @@ export default function App() {
     botReady,
     initError,
     threads,
-    threadsLoading,
-    activeThreadId,
     messages,
     messagesLoading,
     isStreaming,
@@ -24,9 +22,7 @@ export default function App() {
     stopMessage,
     selectThread,
     startNewChat,
-    renameThread,
     deleteThread,
-    deleteAllThreads,
   } = useBot();
 
   const [historyOpen, setHistoryOpen] = useState(false);

@@ -33,9 +33,6 @@ export default function ChatInput({ onSend, onStop, isStreaming, disabled }) {
   return (
     <div className="px-4 pb-3 pt-2">
       <div className="flex items-end gap-2 bg-blue-50 border border-blue-200 rounded-2xl px-3 py-2 shadow-sm">
-        {/* + button */}
-
-
         {/* Text area */}
         <textarea
           ref={textareaRef}
